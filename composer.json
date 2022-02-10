@@ -3,7 +3,7 @@
     "description": "This is a PHP SDK for A/B Testing",
     "type": "library",
     "keywords": ["sdk", "sensorsdata"],
-    "license": "Apache License 2.0",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Meng Xiangyu",

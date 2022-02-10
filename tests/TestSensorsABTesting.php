@@ -8,6 +8,16 @@ define('ABTestingAPIUrl', 'http://10.130.6.5:8202/api/v2/abtest/online/results?p
 define('SDKLogFileName', 'sdk_testlog_at_'.time().'.testlog');
 
 final class TestSensorsABTesting extends TestCase {
+    public function testDefaultInit() {
+        $sa = new SensorsAnalytics(new FileConsumer(SDKLogFileName));
+        $sab = new SensorsABTesting(ABTestingAPIUrl, $sa, [ "enable_event_cache" => false]);
+        $experiment_result = $sab->async_fetch_abtest("mengxy", true, [
+            "default_value" => '1',
+            "value_type" => "STRING",
+            "param_name" => 'test_string',
+        ]);
+        $this->assertSame($experiment_result['value'], 'aaa');
+    }
     /**
      * 验证调用 async_fetch_abtest 返回实验值结果正确
      * 前置条件：ab 实验配置了 参数名为 test_string 类型为string 的实验

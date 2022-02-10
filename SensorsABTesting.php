@@ -3,8 +3,8 @@
 define('SENSORS_ABTESTING_SDK_VERSION', '0.0.1');
 require 'vendor/autoload.php';
 
-require_once("./lib/LRUCache.php");
-require_once("./lib/cache.php");
+require_once(__DIR__ . "/lib/LRUCache.php");
+require_once(__DIR__."/lib/cache.php");
 
 class SensorsABTesting {
 
@@ -66,40 +66,45 @@ class SensorsABTesting {
             if (!is_array($cache_config)) {
                 throw new Exception("cache_config must be an array");
             }
-            if (!(isset($cache_config['type']) && ($cache_config['type'] == 'redis' || $cache_config['type'] == 'memcached'))) {
-                throw new Exception("Invalid cache server type, only redis/memcached supported");
-            }
             if (!isset($cache_config['enable_event_cache'])) {
                 $cache_config['enable_event_cache'] = true;
+            } 
+            
+
+            if (isset($cache_config['type'])) {
+                if (!($cache_config['type'] == 'redis' || $cache_config['type'] == 'memcached')) {
+                    throw new Exception("Invalid cache server type, only redis/memcached supported");
+                }
             }
 
+            if (isset($cache_config['host']) && isset($cache_config['port'])) {
+                $experiment_cache_size = 4096;
+                if (isset($cache_config['experiment_cache_size']) && intval($cache_config['experiment_cache_size']) > 0) {
+                    $experiment_cache_size = intval($cache_config['experiment_cache_size']);
+                }
+                $experiment_cache_time = 86400;
+                if (isset($cache_config['experiment_cache_time'])
+                    && intval($cache_config['experiment_cache_time']) > 0
+                    && intval($cache_config['experiment_cache_time']) < $experiment_cache_time) {
+                    $experiment_cache_time = intval($cache_config['experiment_cache_time']);
+                }
 
-            $experiment_cache_size = 4096;
-            if (isset($cache_config['experiment_cache_size']) && intval($cache_config['experiment_cache_size']) > 0) {
-                $experiment_cache_size = intval($cache_config['experiment_cache_size']);
-            }
-            $experiment_cache_time = 86400;
-            if (isset($cache_config['experiment_cache_time'])
-                && intval($cache_config['experiment_cache_time']) > 0
-                && intval($cache_config['experiment_cache_time']) < $experiment_cache_time) {
-                $experiment_cache_time = intval($cache_config['experiment_cache_time']);
-            }
-
-            try {
-                $this->_experiments_cache = new LRUCache(
-                    $cache_config['type'], 
-                    $cache_config['host'], 
-                    $cache_config['port'], 
-                    isset($cache_config['auth']) ? $cache_config['auth'] : null , 
-                    "experiment",
-                    $experiment_cache_size,
-                    $experiment_cache_time
-                );
-                if (!isset($this->_experiments_cache)) {
+                try {
+                    $this->_experiments_cache = new LRUCache(
+                        $cache_config['type'], 
+                        $cache_config['host'], 
+                        $cache_config['port'], 
+                        isset($cache_config['auth']) ? $cache_config['auth'] : null , 
+                        "experiment",
+                        $experiment_cache_size,
+                        $experiment_cache_time
+                    );
+                    if (!isset($this->_experiments_cache)) {
+                        $this->print_log("Experiment cache server can not connect. fast_fetch will fallback to async_fetch");
+                    }
+                } catch (Exception $e) {
                     $this->print_log("Experiment cache server can not connect. fast_fetch will fallback to async_fetch");
                 }
-            } catch (Exception $e) {
-                $this->print_log("Experiment cache server can not connect. fast_fetch will fallback to async_fetch");
             }
 
 
