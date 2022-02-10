@@ -1,7 +1,6 @@
 <?php
 
 define('SENSORS_ABTESTING_SDK_VERSION', '0.0.1');
-require 'vendor/autoload.php';
 
 require_once(__DIR__ . "/lib/LRUCache.php");
 require_once(__DIR__."/lib/cache.php");
