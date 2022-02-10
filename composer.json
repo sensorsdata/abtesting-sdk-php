@@ -1,0 +1,22 @@
+{
+    "name": "sensorsdata/abtesting-sdk-php",
+    "description": "This is a PHP SDK for A/B Testing",
+    "type": "library",
+    "keywords": ["sdk", "sensorsdata"],
+    "license": "Apache License 2.0",
+    "authors": [
+        {
+            "name": "Meng Xiangyu",
+            "email": "mengxiangyu@sensorsdata.cn"
+        }
+    ],
+    "autoload": {
+        "files": ["SensorsABTesting.php"]
+    },
+    "require": {
+		"sensorsdata/sa-sdk-php": "v1.10.5"
+	},
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
