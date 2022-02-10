@@ -17,7 +17,7 @@ A/B Testing SDK 是一款用于 A/B 测试的 SDK。
 
 ## 集成文档
 
-请参考神策官网 [PHP SDK 集成文档（A/B Testing）]()。
+请参考神策官网 [PHP SDK 集成文档（A/B Testing）](https://manual.sensorsdata.cn/abtesting/latest/page-71401529.html)。
 
 
 ## 贡献
