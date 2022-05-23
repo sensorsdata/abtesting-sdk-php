@@ -146,7 +146,7 @@ class SensorsABTesting {
                     $cache_config['type'], 
                     $cache_config['host'], 
                     $cache_config['port'], 
-                    isset($cache_config['auth']) ? $cache_config['auth'] : null , 
+                    isset($cache_config['auth']) ? $cache_config['auth'] : null
                 );
             } catch (\Throwable $th) {
             }
