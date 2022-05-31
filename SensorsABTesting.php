@@ -146,7 +146,7 @@ class SensorsABTesting {
                     $cache_config['type'], 
                     $cache_config['host'], 
                     $cache_config['port'], 
-                    isset($cache_config['auth']) ? $cache_config['auth'] : null
+                    isset($cache_config['auth']) ? $cache_config['auth'] : null 
                 );
             } catch (\Throwable $th) {
             }
@@ -326,41 +326,45 @@ class SensorsABTesting {
 
     public function _convert_experiments($experiments, $distinct_id, $is_login_id, $param_name, $param_type, $default_value) {
         foreach ($experiments as $key => $experiment) {
-            foreach ($experiment->variables as $key => $variable) {
-                if ($variable->name == $param_name) {
-                    $data_type = $variable->type;
-                    if ($data_type != $param_type) {
-                        continue;
-                    }
-                    $value = $variable->value;
-                    switch ($data_type) {
-                        case 'STRING':
-                            $value = strval($value);
-                            break;
-                        case 'INTEGER':
-                            $value = intval($value);
-                            break;
-                        case 'JSON':
-                            $value = json_decode($value);
-                            break;
-                        case 'BOOLEAN':
-                            $value = boolval($value);
-                            break;
-                        default:
-                            $value = null;
-                            break;
-                    }
+            if (isset($experiment) && isset($experiment->variables)) {
+                foreach ($experiment->variables as $key => $variable) {
+                    if (isset($variable) && isset($variable->name)) {
+                        if ($variable->name == $param_name) {
+                            $data_type = $variable->type;
+                            if ($data_type != $param_type) {
+                                continue;
+                            }
+                            $value = $variable->value;
+                            switch ($data_type) {
+                                case 'STRING':
+                                    $value = strval($value);
+                                    break;
+                                case 'INTEGER':
+                                    $value = intval($value);
+                                    break;
+                                case 'JSON':
+                                    $value = json_decode($value);
+                                    break;
+                                case 'BOOLEAN':
+                                    $value = boolval($value);
+                                    break;
+                                default:
+                                    $value = null;
+                                    break;
+                            }
 
-                    if ($value) {
-                        return array(
-                            "distinct_id" => $distinct_id,
-                            "is_login_id" => $is_login_id,
-                            "abtest_experiment_id" => $experiment->abtest_experiment_id,
-                            "abtest_experiment_group_id" => $experiment->abtest_experiment_group_id,
-                            "is_white_list" => $experiment->is_white_list,
-                            "is_control_group" => $experiment->is_control_group,
-                            "value" => $value
-                        );
+                            if ($value) {
+                                return array(
+                                    "distinct_id" => $distinct_id,
+                                    "is_login_id" => $is_login_id,
+                                    "abtest_experiment_id" => $experiment->abtest_experiment_id,
+                                    "abtest_experiment_group_id" => $experiment->abtest_experiment_group_id,
+                                    "is_white_list" => $experiment->is_white_list,
+                                    "is_control_group" => $experiment->is_control_group,
+                                    "value" => $value
+                                );
+                            }
+                        }
                     }
                 }
             }
