@@ -325,6 +325,13 @@ class SensorsABTesting {
     }
 
     public function _convert_experiments($experiments, $distinct_id, $is_login_id, $param_name, $param_type, $default_value) {
+        if (!is_array($experiments)) {
+            return array(
+                "distinct_id" => $distinct_id,
+                "is_login_id" => $is_login_id,
+                "value" => $default_value
+            );
+        }
         foreach ($experiments as $key => $experiment) {
             if (isset($experiment) && isset($experiment->variables)) {
                 foreach ($experiment->variables as $key => $variable) {
