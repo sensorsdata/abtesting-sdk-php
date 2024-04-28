@@ -1,6 +1,6 @@
 <?php
 
-define('SENSORS_ABTESTING_SDK_VERSION', '0.0.5');
+define('SENSORS_ABTESTING_SDK_VERSION', '0.0.6');
 
 require_once(__DIR__ . "/lib/LRUCache.php");
 require_once(__DIR__."/lib/cache.php");
