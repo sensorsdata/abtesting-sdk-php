@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use SebastianBergmann\Environment\Console;
+
 require 'vendor/autoload.php';
 require_once("SensorsABTesting.php");
+
 
 define('ABTestingAPIUrl', 'http://10.130.6.5:8202/api/v2/abtest/online/results?project-key=438B9364C98D54371751BA82F6484A1A03A5155E');
 define('SDKLogFileName', 'sdk_testlog_at_'.time().'.testlog');
@@ -317,6 +320,35 @@ final class TestSensorsABTesting extends TestCase {
         $this->assertSame($experiment_result['value'], 'aaa');
     }
 
+
+    public function testBoolean()
+    {
+        $sa = new SensorsAnalytics(new FileConsumer(SDKLogFileName));
+        $sab = new SensorsABTesting(
+            "http://10.129.29.108:8202/api/v2/abtest/online/results?project-key=DA3D62D0AB384C45C252D6A19D2AE435F8A32C81",  // 试验上线前，请检查试验的分流服务的 url 是否正确
+            $sa, // 神策分析埋点 SDK 的实例
+            ["enable_event_cache" => false] // 不使用事件缓存
+        );
+
+        // 初始化 SDK 之后，可以通过 fast_fetch_abtest 接口获取具体试验的变量值，然后进行试验。
+        $distinct_id = "xxx123";
+        $is_login_id = true;   // 当前用户是否是登录 ID
+
+        // 当前为 Boolean 类型试验
+        $experiment_result = $sab->async_fetch_abtest(
+            $distinct_id,
+            $is_login_id,
+            [
+                "param_name" => "test_boolean",
+                "value_type" => "BOOLEAN",
+                "default_value" => true // false 表示未命中试验时，会返回此默认值，请根据业务需要更改此处的值
+            ]
+        );
+        // TODO 请根据 $experiment_result['value'] 进行自己的试验，当前试验对照组返回值为：false，试验组依次返回：true
+        var_dump($experiment_result['value']);
+    }
+
+
     /**
      * 验证调用 手动可触发事件	
      * 前置条件: 缓存中存在 参数名为 btn_type 类型为string 的实验
@@ -350,7 +382,6 @@ final class TestSensorsABTesting extends TestCase {
      * 验证缓存大小，超出容量需要按照 LRU 规则删除过期缓存
      */
     public function testCacheCapacity() {
-
         $this->assertSame(1, 1);
     }
 

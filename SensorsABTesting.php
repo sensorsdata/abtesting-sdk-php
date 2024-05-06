@@ -1,6 +1,6 @@
 <?php
 
-define('SENSORS_ABTESTING_SDK_VERSION', '0.0.6');
+define('SENSORS_ABTESTING_SDK_VERSION', '0.0.7');
 
 require_once(__DIR__ . "/lib/LRUCache.php");
 require_once(__DIR__."/lib/cache.php");
@@ -231,6 +231,7 @@ class SensorsABTesting {
         } else {
             $experiments = $this->_fetch_experiment_result($distinct_id, $is_login_id, $request_params);
         }
+
         $experiment_result = $this->_convert_experiments($experiments, $distinct_id, $is_login_id, $request_params['param_name'], $request_params['value_type'], $request_params['default_value']);
 
         if ($enable_auto_track_event) {
@@ -353,14 +354,14 @@ class SensorsABTesting {
                                     $value = json_decode($value);
                                     break;
                                 case 'BOOLEAN':
-                                    $value = boolval($value);
+                                    $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                                     break;
                                 default:
                                     $value = null;
                                     break;
                             }
 
-                            if ($value) {
+                            if ($value !== null) {
                                 return array(
                                     "distinct_id" => $distinct_id,
                                     "is_login_id" => $is_login_id,
