@@ -254,18 +254,25 @@ class Node {
             'next' => $this->next instanceof Node ? $this->next->getKey(): $this->next,
             'data' => $this->data
         ));
-
         $this::$hashmap[$this->key] = $this;
-
         $cache_time = LRUCache::$cache_time;
         $expire = (new DateTime())->getTimestamp() + $cache_time;
-
-        $this->cache_server->set($this->key, $encoded_node, $expire);
+        if ($this->cache_server !== null) {
+            $this->cache_server->set($this->key, $encoded_node, $expire);
+        } else {
+            // 处理 $this->cache_server 为 null 的情况
+            throw new Exception("Cache server is not initialized.");
+        }
     }
 
     public function remove() {
         unset($this::$hashmap[$this->key]);
-        $this->cache_server->remove($this->key);
+        if ($this->cache_server !== null) {
+            $this->cache_server->remove($this->key);
+        } else {
+            // 处理 $this->cache_server 为 null 的情况
+            throw new Exception("Cache server is not initialized.");
+        }
     }
 
 

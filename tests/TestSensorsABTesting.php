@@ -182,7 +182,8 @@ final class TestSensorsABTesting extends TestCase {
             "type" => "redis",
             "host" => "127.0.0.1",
             "port" => "6379",
-            "enable_event_cache" => true,
+            "enable_evqent_cache" => true,
+            "log_path" => __DIR__ . "/SA.log"
         ]);
         $experiment_result = $sab->fast_fetch_abtest("mengxy", true, [
             "default_value" => '1',
