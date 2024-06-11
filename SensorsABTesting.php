@@ -1,6 +1,6 @@
 <?php
 
-define('SENSORS_ABTESTING_SDK_VERSION', '0.0.7');
+define('SENSORS_ABTESTING_SDK_VERSION', '0.0.8');
 
 require_once(__DIR__ . "/lib/LRUCache.php");
 require_once(__DIR__."/lib/cache.php");
@@ -41,6 +41,11 @@ class SensorsABTesting {
      * $lib_plugin_version 缓存
      */
     private $_lib_plugin_version_cache;
+
+    /*
+     * log path
+     */
+    private $_log_path;
 
     /**
      * @param string $api_url 项目数据接收地址	
@@ -150,6 +155,12 @@ class SensorsABTesting {
                 );
             } catch (\Throwable $th) {
             }
+
+            if (isset($cache_config['log_path'])) {
+                $this->_log_path = $cache_config['log_path'];
+            } else {
+                $this->_log_path = __DIR__ . '/abtesting.log';
+            }
         }
 
         return $this;
@@ -212,6 +223,7 @@ class SensorsABTesting {
             throw new Exception("\$is_login_id must be boolean");
         }
 
+
         $enable_auto_track_event = true;
         if (isset($request_params['enable_auto_track_event']) && is_bool($request_params['enable_auto_track_event'])) {
             $enable_auto_track_event = $request_params['enable_auto_track_event'];
@@ -226,6 +238,9 @@ class SensorsABTesting {
                 }
             } catch(Exception $e) {
                 $this->print_log("Cache server connection lost. Fetch experiment result from server directly");
+                $experiments = $this->_fetch_experiment_result($distinct_id, $is_login_id, $request_params);
+            } catch (Error $e) {
+                $this->print_log("Error occurred: " . $e->getMessage());
                 $experiments = $this->_fetch_experiment_result($distinct_id, $is_login_id, $request_params);
             }
         } else {
@@ -456,6 +471,11 @@ class SensorsABTesting {
 
     private function print_log($msg) {
         $time = date(DATE_W3C);
-        echo $time.": ".$msg;
+        $log_msg = $time . ": " . $msg . PHP_EOL;
+        if ($this->_log_path) {
+            error_log($log_msg, 3, $this->_log_path);
+        } else {
+            error_log($log_msg);
+        }
     }
 }
