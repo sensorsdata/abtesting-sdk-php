@@ -24,4 +24,4 @@ A/B Testing SDK 是一款用于 A/B 测试的 SDK。
 
 
 ## License
-[License 协议](https://github.com/sensorsdata/abtesting-sdk-php/blob/main/LICENSE)
+参照 [License 协议](https://github.com/sensorsdata/abtesting-sdk-php/blob/main/LICENSE)
